@@ -4,98 +4,155 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFF1D6">
 <title>მოდი გავსინჯო — გადახდა</title>
+<link rel="icon" href="logo.png">
 <style>
-  :root { --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --accent:#1e2a44; --line:#d9dce3; --ok:#16a34a; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#111317; --card:#1b1e25; --text:#f1f3f6; --muted:#9aa3b2; --accent:#3b82f6; --line:#2e333d; --ok:#22c55e; }
+  :root {
+    --cream:#FFF1D6;
+    --card:#ffffff;
+    --text:#2A1A10;
+    --muted:#7A6552;
+    --line:#EBD7B5;
+    --accent:#C2650A;      /* ნარინჯისფერი (ბანკის არჩევა) */
+    --dark:#2A1A10;        /* კოპირების ღილაკი */
+    --ok:#15803D;
   }
   * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-         background:linear-gradient(160deg,#1e2a44 0%,#141b2d 100%); color:var(--text);
-         font-family:system-ui,-apple-system,"Noto Sans Georgian",sans-serif; padding:16px; }
-  .card { width:100%; max-width:420px; background:var(--card); border-radius:16px; padding:24px;
-          box-shadow:0 4px 24px rgba(0,0,0,.08); }
-  h1 { font-size:20px; margin:0 0 4px; }
-  .sub { color:var(--muted); font-size:14px; margin:0 0 20px; }
-  .banks { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
-  .bank { padding:16px 8px; font-size:15px; font-weight:600; border:2px solid var(--line); border-radius:12px;
-          background:transparent; color:var(--text); cursor:pointer; }
-  .bank.active { border-color:var(--accent); background:var(--accent); color:#fff; }
-  #details { display:none; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; min-height:100vh; min-height:100dvh;
+    display:flex; align-items:center; justify-content:center;
+    padding:96px 16px 28px;
+    background:var(--cream) url('pattern.png') repeat;
+    background-size:320px 320px;
+    color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Georgian",sans-serif;
+  }
+  .card {
+    width:100%; max-width:420px;
+    background:var(--card);
+    border-radius:24px;
+    padding:28px 22px 22px;
+    box-shadow:0 12px 40px rgba(80,40,0,.22), 0 2px 8px rgba(80,40,0,.12);
+    text-align:center;
+  }
+  .logo { display:block; width:132px; height:132px; margin:-72px auto 8px;
+          border-radius:50%; box-shadow:0 6px 18px rgba(80,40,0,.28); background:#fff; }
+  h1 { font-size:20px; margin:8px 0 4px; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 18px; }
+
+  .banks { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+  .bank {
+    padding:16px 8px; font:inherit; font-size:15px; font-weight:700; line-height:1.25;
+    color:var(--text); background:#fff; border:2px solid var(--line); border-radius:14px; cursor:pointer;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .bank:hover { border-color:var(--accent); }
+  .bank[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  #details { display:none; text-align:left; background:#FFF8EA; border:1px solid var(--line);
+             border-radius:16px; padding:16px; }
   #details.show { display:block; }
-  .label { font-size:12px; color:var(--muted); margin-bottom:4px; }
-  .value { font-size:15px; margin-bottom:16px; word-break:break-word; }
-  .iban { font-family:ui-monospace,Menlo,monospace; font-size:17px; letter-spacing:.5px;
-          padding:14px; border-radius:10px; background:var(--bg); margin-bottom:12px; user-select:all; word-break:break-all; }
-  #copy { width:100%; padding:14px; font-size:16px; font-weight:600; border:0; border-radius:10px;
-          background:var(--accent); color:#fff; cursor:pointer; }
+  .label { font-size:12px; color:var(--muted); margin-bottom:3px; }
+  .value { font-size:15px; font-weight:600; margin-bottom:14px; word-break:break-word; }
+  .iban { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:clamp(10.5px,3.5vw,17px); font-weight:600;
+          letter-spacing:0; padding:13px 10px; border-radius:10px; background:#fff;
+          border:1px solid var(--line); margin-bottom:12px; white-space:nowrap; overflow-x:auto;
+          text-align:center; user-select:all; }
+  .iban.empty { white-space:normal; font-family:inherit; font-size:14px; font-weight:500; color:var(--muted); }
+  #copy { width:100%; padding:15px; font:inherit; font-size:16px; font-weight:700; color:#fff;
+          background:var(--dark); border:0; border-radius:12px; cursor:pointer; }
   #copy.done { background:var(--ok); }
-  .hint { color:var(--muted); font-size:13px; text-align:center; margin:0; }
+  #copy:disabled { background:#b9a893; cursor:not-allowed; }
+
+  .notice { margin:16px 0 0; padding:11px 12px; font-size:13px; line-height:1.45; color:#7a3b00;
+            background:#FFF1D6; border-radius:12px; }
+  .choose { margin:0 0 4px; color:var(--muted); font-size:14px; }
 </style>
 </head>
 <body>
 <main class="card">
-  <h1 style="text-align: center;">"მოდი გავსინჯო" </h1>
-  <p></p>
-  
-  <div class="banks">
-    <button class="bank" type="button" data-bank="bog">საქართველოს ბანკი</button>
-    <button class="bank" type="button" data-bank="tbc">თიბისი ბანკი</button>
+  <img class="logo" src="logo.png" alt="მოდი გავსინჯო" width="132" height="132">
+  <h1>გადახდის რეკვიზიტები</h1>
+  <p class="sub">აირჩიეთ თქვენი ბანკი</p>
+
+  <div class="banks" role="group" aria-label="ბანკის არჩევა">
+    <button class="bank" type="button" data-bank="bog" aria-pressed="false">საქართველოს ბანკი</button>
+    <button class="bank" type="button" data-bank="tbc" aria-pressed="false">თიბისი ბანკი</button>
   </div>
 
-  <div id="details">
+  <div id="details" aria-live="polite">
     <div class="label">მიმღები</div>
     <div class="value">ქეთევან .ბ</div>
 
     <div class="label">ბანკი</div>
     <div class="value" id="bankName"></div>
 
-    <div class="label">ანგარიშის ნომერი</div>
+    <div class="label">ანგარიშის ნომერი (IBAN)</div>
     <div class="iban" id="iban"></div>
 
     <button id="copy" type="button">ანგარიშის ნომრის კოპირება</button>
   </div>
-  <p class="hint" id="hint">!!! გადარიცხვამდე აუცილებლად შეამოწმეთ მიმღების მონაცემები შენს საბანკო აპლიკაციაში !!! </p>
+
+  <p class="notice">⚠ გადარიცხვამდე აუცილებლად შეამოწმეთ მიმღების მონაცემები თქვენს საბანკო აპლიკაციაში</p>
 </main>
 
 <script>
-  // ↓ აქ ჩაწერე შენი რეალური მონაცემები
+  // ↓ აქ ჩაწერე რეალური ანგარიშის ნომრები (თიბისის ნომერი ჯერ შაბლონია)
   const BANKS = {
     bog: { name: 'საქართველოს ბანკი', iban: 'GE43BG0000000613662097' },
-    tbc: { name: 'თიბისი ბანკი',      iban: 'GE00TB0000000000000000' }
+    tbc: { name: 'თიბისი ბანკი',      iban: 'GE91TB7529845068100017' }
   };
 
+  const COPY_TEXT = 'ანგარიშის ნომრის კოპირება';
   const btn = document.getElementById('copy');
   const ibanEl = document.getElementById('iban');
   const details = document.getElementById('details');
-  const hint = document.getElementById('hint');
+  let current = null, timer = null;
 
-  document.querySelectorAll('.bank').forEach(b => {
+  // შაბლონი (GE00...) ნამდვილ ნომრად არ ჩაითვლება და არ დაკოპირდება
+  const isPlaceholder = (i) => /^GE00/.test(i);
+  const pretty = (i) => i.replace(/(.{4})/g, '$1 ').trim();
+
+  document.querySelectorAll('.bank').forEach((b) => {
     b.addEventListener('click', () => {
-      const bank = BANKS[b.dataset.bank];
-      document.querySelectorAll('.bank').forEach(x => x.classList.toggle('active', x === b));
-      document.getElementById('bankName').textContent = bank.name;
-      ibanEl.textContent = bank.iban;
-      details.classList.add('show');
-      hint.style.display = 'none';
-      btn.textContent = 'ანგარიშის ნომრის კოპირება';
+      current = BANKS[b.dataset.bank];
+      document.querySelectorAll('.bank').forEach((x) =>
+        x.setAttribute('aria-pressed', String(x === b)));
+      document.getElementById('bankName').textContent = current.name;
+      clearTimeout(timer);
       btn.classList.remove('done');
+      ibanEl.classList.toggle('empty', isPlaceholder(current.iban));
+      if (isPlaceholder(current.iban)) {
+        ibanEl.textContent = 'ნომერი ჯერ არ არის დამატებული';
+        btn.textContent = COPY_TEXT;
+        btn.disabled = true;
+      } else {
+        ibanEl.textContent = pretty(current.iban);
+        btn.textContent = COPY_TEXT;
+        btn.disabled = false;
+      }
+      details.classList.add('show');
     });
   });
 
   btn.addEventListener('click', async () => {
-    const text = ibanEl.textContent.trim();
+    if (!current || isPlaceholder(current.iban)) return;
+    const text = current.iban;            // სუფთა ნომერი, ინტერვალების გარეშე
     try {
       await navigator.clipboard.writeText(text);
     } catch (e) {
-      const r = document.createRange(); r.selectNodeContents(ibanEl);
-      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      const t = document.createElement('textarea');
+      t.value = text; t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
       document.execCommand('copy');
+      document.body.removeChild(t);
     }
     btn.textContent = '✓ დაკოპირდა';
     btn.classList.add('done');
-    setTimeout(() => { btn.textContent = 'ანარიშის ნომრის კოპირება'; btn.classList.remove('done'); }, 2000);
+    clearTimeout(timer);
+    timer = setTimeout(() => { btn.textContent = COPY_TEXT; btn.classList.remove('done'); }, 2000);
   });
 </script>
 </body>
