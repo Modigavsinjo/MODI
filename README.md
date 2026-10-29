@@ -1,4 +1,4 @@
-# MODI
+# Modi Gavsinjo
 Security and Maintenance
 
 The repository owner is responsible for maintaining the website content and protecting access to the repository and its publishing configuration.
